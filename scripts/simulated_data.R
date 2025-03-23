@@ -11,18 +11,17 @@ inverts_simulated <- read_csv("./data_raw/BIOL404 - invert counts - simulated_da
 #calculate species richness using shannon diversity index
 
 # Select only the species columns
-species_data <- inverts_simulated[, 3:7]
+
+species_data <- select(inverts_simulated,"Mesostigmatids":"Other arachnids")
 
 # Calculate Shannon Diversity Index for each row
-inverts_simulated$shannon_index <- diversity(species_data, index = "shannon")
+inverts_simulated <- inverts_simulated %>% 
+  mutate(shannon_index=diversity(species_data, index = "shannon"),
+         species_richness=specnumber(species_data),
+         species_evenness=(shannon_index/log(species_richness)),
+         total_abundance <- rowSums(species_data)
+         )
 
-inverts_simulated$species_richness <- specnumber(species_data)
-
-#calculate Pielous J for species eveness
-inverts_simulated$species_evenness <- inverts_simulated$shannon_index / log(inverts_simulated$species_richness)
-
-#calculate species abundance
-inverts_simulated$total_abundance <- rowSums(species_data)
 
 #save as csv
 write.csv(inverts_simulated, "./data_cleaned/inverts_simulated.csv")
