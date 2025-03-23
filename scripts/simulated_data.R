@@ -6,7 +6,7 @@ library(tidyverse)
 library(dplyr)
 
 #load data
-inverts_simulated <- read_csv("C:/Users/sophi/OneDrive/Desktop/BIOL404 - invert counts - simulated_data.csv")
+inverts_simulated <- read_csv("./data_raw/BIOL404 - invert counts - simulated_data.csv")
 
 #calculate species richness using shannon diversity index
 
