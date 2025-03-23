@@ -23,5 +23,8 @@ inverts_simulated$species_evenness <- inverts_simulated$shannon_index / log(inve
 
 #calculate species abundance
 inverts_simulated$total_abundance <- rowSums(species_data)
+
+#save as csv
+write.csv(inverts_simulated, "inverts_simulated.csv")
                             
                             
