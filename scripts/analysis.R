@@ -8,6 +8,8 @@ library(lme4)
 library(lmerTest)
 library(car)
 library(MASS)
+"install.packages("glmmTMB")"
+library(glmmTMB)
 
 diameter_core <- 8.6  #cm
 
@@ -40,7 +42,7 @@ hist(inverts$species_evenness)  #Very left skewed
 hist(inverts$total_abundance)    #roughly poisson
 mean(inverts$total_abundance)/var(inverts$total_abundance)   #0.3545879, Overdispersed
 
-richness_model <- glm.nb(species_richness ~ d_from_path_m + (1|transect), data = inverts)
+richness_model <- glmmTMB(species_richness ~ d_from_path_m + (1|transect), family=poisson,data = inverts)  #Must be glmm() to account for random effect
 
 residuals_richness <- residuals(richness_model)
 qqnorm(residuals_richness)
@@ -56,6 +58,7 @@ evenness_model <- glm(species_evenness ~ d_from_path_m + (1|transect),family = p
 residuals_evenness <- residuals(evenness_model)
 qqnorm(residuals_evenness)
 qqline(residuals_evenness)
+
 hist(residuals_evenness)
 
 summary(evenness_model)
