@@ -25,10 +25,13 @@ inverts <- inverts %>%
   mutate(density=Soil.dry.weight....2.5g.for.plastic.bag./(pi*depth.of.sample..cm.*(diameter_core/2)^2),
          shannon_index=diversity(species_data, index = "shannon"),
          species_richness=specnumber(species_data),
-         species_evenness=(shannon_index/log(species_richness)),
+         species_evenness = ifelse(species_richness == 1, 
+                                    1, 
+                                    shannon_index / log(species_richness)), #where species richness is = 1, make eveness also = 1
          total_abundance=rowSums(species_data)
          )
 
+View(inverts)
 #save as csv
 write.csv(inverts, "./data_cleaned/inverts_cleaned.csv")
 
