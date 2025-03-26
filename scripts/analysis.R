@@ -8,6 +8,7 @@ library(lme4)
 library(lmerTest)
 library(car)
 library(MASS)
+library()
 
 diameter_core <- 8.6  #cm
 
@@ -54,7 +55,7 @@ summary(richness_model)
 anova(richness_model)
 Anova(richness_model)
 
-evenness_model <- glm(species_evenness ~ d_from_path_m + (1|transect),family = poisson, data = inverts)   #will probably use a different link function
+evenness_model <- glmmTMB(species_evenness ~ d_from_path_m + (1|transect),family = poisson, data = inverts)   #will probably use a different link function
 
 residuals_evenness <- residuals(evenness_model)
 qqnorm(residuals_evenness)
