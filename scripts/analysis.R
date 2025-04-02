@@ -33,7 +33,7 @@ inverts <- inverts %>%
          total_abundance=rowSums(species_data)
          )
 
-View(inverts)
+
 #save as csv
 write.csv(inverts, "./data_cleaned/inverts_cleaned.csv")
 
@@ -45,7 +45,13 @@ hist(inverts$species_evenness)  #Very left skewed
 hist(inverts$total_abundance)    #roughly poisson
 mean(inverts$total_abundance)/var(inverts$total_abundance)   #0.3545879, Overdispersed
 
-richness_model <- glmer(species_richness ~ d_from_path_m + (1|transect), family=poisson,data = inverts)  #Must be glmm() to account for random effect
+richness_model <- glmer(species_richness ~ d_from_path_m + (1|transect),family=poisson,data = inverts)  #Must be glmm() to account for random effect
+
+summary(richness_model)
+
+dispersion.ratio <- 58.5/17
+
+richness_model <- glmer((species_richness/dispersion.ratio) ~ d_from_path_m + (1|transect),family=poisson,data = inverts)  #Must be glmm() to account for random effect
 
 residuals_richness <- residuals(richness_model)
 qqnorm(residuals_richness)
