@@ -47,16 +47,17 @@ hist(inverts$species_evenness)  #Very left skewed
 hist(inverts$total_abundance)    #roughly poisson
 mean(inverts$total_abundance)/var(inverts$total_abundance)   #0.3545879, Overdispersed
 
-richness_model <- glmer(species_richness ~ d_from_path_m + (1|transect),family=poisson,data = inverts)  #Must be glmm() to account for random effect
 
-summary(richness_model)
 
-dispersion.ratio.richness <- 58.5/17
+richness_model_1 <- glmmTMB(species_richness ~ d_from_path_m + (1|transect),family=nbinom1,data = inverts)  #Must be glmm() to account for random effect
 
-inverts <- inverts %>% 
-  mutate(species_richness_corrected=species_richness/dispersion.ratio.richness)
+summary(richness_model_1)
 
-richness_model <- glmer(species_richness_corrected ~ d_from_path_m + (1|transect),family=poisson,data = inverts)  #Must be glmm() to account for random effect
+richness_model_2 <- glmmTMB(species_richness ~ d_from_path_m + (1|transect),family=nbinom2,data = inverts)  #Must be glmm() to account for random effect
+
+summary(richness_model_2)
+
+AICtab(richness_model_1,richness_model_2)
 
 residuals_richness <- residuals(richness_model)
 qqnorm(residuals_richness)
@@ -67,7 +68,7 @@ summary(richness_model)
 anova(richness_model)
 Anova(richness_model)
 
-evenness_model <- glmer(species_evenness ~ d_from_path_m + (1|transect),family = poisson, data = inverts)   #will probably use a different link function
+evenness_model <- glmTMB(species_evenness ~ d_from_path_m + (1|transect),family = nbinom2, data = inverts)   #will probably use a different link function
 
 residuals_evenness <- residuals(evenness_model)
 qqnorm(residuals_evenness)
@@ -79,16 +80,9 @@ summary(evenness_model)
 anova(evenness_model)
 Anova(evenness_model)
 
-abundance_model <- glmer(total_abundance ~ d_from_path_m + (1|transect), family=poisson, data = inverts)
+abundance_model <- glmmTMB(total_abundance ~ d_from_path_m + (1|transect), family=nbinom2, data = inverts)   #Negative binomial is slightly better.
 
-summary(abundance_model)
-
-dispersion.ratio.abundance <- 109.2/17
-
-inverts <- inverts %>% 
-  mutate(abundance.corrected=total_abundance/dispersion.ratio.abundance)
-
-abundance_model <- glmer(abundance.corrected ~ d_from_path_m + (1|transect), family=poisson, data = inverts)
+abundance_model <- glmmTMB(total_abundance ~ d_from_path_m + (1|transect), family=poisson, data = inverts)   #Poisson is slightly worse.
 
 residuals_abundance <- residuals(abundance_model)
 qqnorm(residuals_abundance)
