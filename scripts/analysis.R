@@ -85,3 +85,45 @@ summary(abundance_model)
 anova(abundance_model)
 Anova(abundance_model)
 
+# ===Density
+
+richness_model_density <- glmer(species_richness ~ density + (1|transect),family=poisson,data = inverts)  #Must be glmm() to account for random effect
+
+summary(richness_model_density)
+
+dispersion.ratio <- 58.5/17
+
+richness_model_density <- glmer((species_richness/dispersion.ratio) ~ density + (1|transect),family=poisson,data = inverts)  #Must be glmm() to account for random effect
+
+residuals_richness_density <- residuals(richness_model_density)
+qqnorm(residuals_richness_density)
+qqline(residuals_richness_density)
+hist(residuals_richness_density)
+
+summary(richness_model_density)
+anova(richness_model_density)
+Anova(richness_model_density)
+
+evenness_model_density <- glmer(species_evenness ~ density + (1|transect),family = poisson, data = inverts)   #will probably use a different link function
+
+residuals_evenness_density <- residuals(evenness_model_density)
+qqnorm(residuals_evenness_density)
+qqline(residuals_evenness_density)
+
+hist(residuals_evenness_density)
+
+summary(evenness_model_density)
+anova(evenness_model_density)
+Anova(evenness_model_density)
+
+abundance_model_density <- glmer(total_abundance ~ density + (1|transect), family=poisson, data = inverts)
+
+residuals_abundance_density <- residuals(abundance_model_density)
+qqnorm(residuals_abundance_density)
+qqline(residuals_abundance_density)
+hist(residuals_abundance_density)
+
+summary(abundance_model)
+anova(abundance_model)
+Anova(abundance_model)
+
