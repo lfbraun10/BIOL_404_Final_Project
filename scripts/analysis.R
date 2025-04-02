@@ -8,7 +8,7 @@ library(lme4)
 library(lmerTest)
 library(car)
 library(MASS)
-"install.packages("glmmTMB")"
+# "install.packages("glmmTMB")"
 library(glmmTMB)
 
 diameter_core <- 8.6  #cm
@@ -51,7 +51,10 @@ summary(richness_model)
 
 dispersion.ratio <- 58.5/17
 
-richness_model <- glmer((species_richness/dispersion.ratio) ~ d_from_path_m + (1|transect),family=poisson,data = inverts)  #Must be glmm() to account for random effect
+inverts <- inverts %>% 
+  mutate(species_richness_corrected=species_richness/dispersion.ratio)
+
+richness_model <- glmer(species_richness_corrected ~ d_from_path_m + (1|transect),family=poisson,data = inverts)  #Must be glmm() to account for random effect
 
 residuals_richness <- residuals(richness_model)
 qqnorm(residuals_richness)
