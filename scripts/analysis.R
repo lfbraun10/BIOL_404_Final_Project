@@ -39,6 +39,8 @@ write.csv(inverts, "./data_cleaned/inverts_cleaned.csv")
 
 # ===Dummy R sript analysis
 
+inverts$species_richness <- as.numeric(inverts$species_richness)
+
 hist(inverts$species_richness)  #Roughly poisson
 mean(inverts$species_richness)/var(inverts$species_richness)  #2.605351 slightly underdispersed
 hist(inverts$species_evenness)  #Very left skewed
@@ -49,10 +51,10 @@ richness_model <- glmer(species_richness ~ d_from_path_m + (1|transect),family=p
 
 summary(richness_model)
 
-dispersion.ratio <- 58.5/17
+dispersion.ratio.richness <- 58.5/17
 
 inverts <- inverts %>% 
-  mutate(species_richness_corrected=species_richness/dispersion.ratio)
+  mutate(species_richness_corrected=species_richness/dispersion.ratio.richness)
 
 richness_model <- glmer(species_richness_corrected ~ d_from_path_m + (1|transect),family=poisson,data = inverts)  #Must be glmm() to account for random effect
 
@@ -78,6 +80,15 @@ anova(evenness_model)
 Anova(evenness_model)
 
 abundance_model <- glmer(total_abundance ~ d_from_path_m + (1|transect), family=poisson, data = inverts)
+
+summary(abundance_model)
+
+dispersion.ratio.abundance <- 109.2/17
+
+inverts <- inverts %>% 
+  mutate(abundance.corrected=total_abundance/dispersion.ratio.abundance)
+
+abundance_model <- glmer(abundance.corrected ~ d_from_path_m + (1|transect), family=poisson, data = inverts)
 
 residuals_abundance <- residuals(abundance_model)
 qqnorm(residuals_abundance)
