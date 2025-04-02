@@ -45,7 +45,7 @@ hist(inverts$species_evenness)  #Very left skewed
 hist(inverts$total_abundance)    #roughly poisson
 mean(inverts$total_abundance)/var(inverts$total_abundance)   #0.3545879, Overdispersed
 
-richness_model <- glmmTMB(species_richness ~ d_from_path_m + (1|transect), family=poisson,data = inverts)  #Must be glmm() to account for random effect
+richness_model <- glmer(species_richness ~ d_from_path_m + (1|transect), family=poisson,data = inverts)  #Must be glmm() to account for random effect
 
 residuals_richness <- residuals(richness_model)
 qqnorm(residuals_richness)
@@ -56,7 +56,7 @@ summary(richness_model)
 anova(richness_model)
 Anova(richness_model)
 
-evenness_model <- glm(species_evenness ~ d_from_path_m + (1|transect),family = poisson, data = inverts)   #will probably use a different link function
+evenness_model <- glmer(species_evenness ~ d_from_path_m + (1|transect),family = poisson, data = inverts)   #will probably use a different link function
 
 residuals_evenness <- residuals(evenness_model)
 qqnorm(residuals_evenness)
@@ -68,7 +68,7 @@ summary(evenness_model)
 anova(evenness_model)
 Anova(evenness_model)
 
-abundance_model <- glm.nb(total_abundance ~ d_from_path_m + (1|transect), data = inverts)
+abundance_model <- glmer(total_abundance ~ d_from_path_m + (1|transect), family=poisson, data = inverts)
 
 residuals_abundance <- residuals(abundance_model)
 qqnorm(residuals_abundance)
