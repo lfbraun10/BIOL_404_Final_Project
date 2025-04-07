@@ -48,16 +48,16 @@ hist(inverts$total_abundance)    #roughly poisson
 mean(inverts$total_abundance)/var(inverts$total_abundance)   #0.3545879, Overdispersed
 
 
+richness_model <- glmmTMB(species_richness ~ d_from_path_m + (1|transect),family=nbinom2,data = inverts)  #Must be glmm() to account for random effect
 
-richness_model_1 <- glmmTMB(species_richness ~ d_from_path_m + (1|transect),family=nbinom1,data = inverts)  #Must be glmm() to account for random effect
+summary(richness_model)
 
-summary(richness_model_1)
+richness.dispersion.ratio <- 58.5/16
 
-richness_model_2 <- glmmTMB(species_richness ~ d_from_path_m + (1|transect),family=nbinom2,data = inverts)  #Must be glmm() to account for random effect
+inverts <- inverts %>% 
+  mutate(corrected_species_richness=round(species_richness/richness.dispersion.ratio, digits = 2)*100)
 
-summary(richness_model_2)
-
-AICtab(richness_model_1,richness_model_2)
+richness_model <- glmmTMB(corrected_species_richness ~ d_from_path_m + (1|transect),family=nbinom2,data = inverts)  #Uncorrected is better
 
 residuals_richness <- residuals(richness_model)
 qqnorm(residuals_richness)
@@ -68,7 +68,7 @@ summary(richness_model)
 anova(richness_model)
 Anova(richness_model)
 
-evenness_model <- glmTMB(species_evenness ~ d_from_path_m + (1|transect),family = nbinom2, data = inverts)   #will probably use a different link function
+evenness_model <- glmmTMB(species_evenness ~ d_from_path_m + (1|transect),family = binomial, data = inverts)   #will probably use a different link function. Beta distribution did not work, as y <= 1
 
 residuals_evenness <- residuals(evenness_model)
 qqnorm(residuals_evenness)
@@ -80,9 +80,27 @@ summary(evenness_model)
 anova(evenness_model)
 Anova(evenness_model)
 
-abundance_model <- glmmTMB(total_abundance ~ d_from_path_m + (1|transect), family=nbinom2, data = inverts)   #Negative binomial is slightly better.
+abundance_model <- glmmTMB(total_abundance ~ d_from_path_m + (1|transect), family=nbinom2, data = inverts)   #Negative binomial is slightly better than poisson
 
-abundance_model <- glmmTMB(total_abundance ~ d_from_path_m + (1|transect), family=poisson, data = inverts)   #Poisson is slightly worse.
+summary(abundance_model)
+
+abundance.dispersion.ratio <- 99/16
+
+inverts <- inverts %>% 
+  mutate(corrected_abundance=round(total_abundance/abundance.dispersion.ratio, digits = 2)*100)
+
+abundance_model <- glmmTMB(corrected_abundance ~ d_from_path_m + (1|transect), family=nbinom2, data = inverts)   #Slightly worse than the regular model without the transformed Y variable.
+
+residuals_abundance <- residuals(abundance_model)
+qqnorm(residuals_abundance)
+qqline(residuals_abundance)
+hist(residuals_abundance)
+
+summary(abundance_model)
+anova(abundance_model)
+Anova(abundance_model)
+
+abundance_model <- glmmTMB(total_abundance ~ d_from_path_m + (1|transect), family=nbinom2, data = inverts)   #Negative binomial is slightly better than poisson
 
 residuals_abundance <- residuals(abundance_model)
 qqnorm(residuals_abundance)
@@ -95,43 +113,58 @@ Anova(abundance_model)
 
 # ===Density
 
-richness_model_density <- glmer(species_richness ~ density + (1|transect),family=poisson,data = inverts)  #Must be glmm() to account for random effect
+richness_model <- glmmTMB(species_richness ~ density + (1|transect),family=nbinom2,data = inverts)  #Must be glmm() to account for random effect
 
-summary(richness_model_density)
+summary(richness_model)
 
-dispersion.ratio <- 58.5/17
+richness.dispersion.ratio <- 58.5/16
 
-richness_model_density <- glmer((species_richness/dispersion.ratio) ~ density + (1|transect),family=poisson,data = inverts)  #Must be glmm() to account for random effect
+inverts <- inverts %>% 
+  mutate(corrected_species_richness=round(species_richness/richness.dispersion.ratio, digits = 2)*100)
 
-residuals_richness_density <- residuals(richness_model_density)
-qqnorm(residuals_richness_density)
-qqline(residuals_richness_density)
-hist(residuals_richness_density)
+richness_model <- glmmTMB(corrected_species_richness ~ density + (1|transect),family=nbinom2,data = inverts)  #Uncorrected is better
 
-summary(richness_model_density)
-anova(richness_model_density)
-Anova(richness_model_density)
+richness_model <- glmmTMB(species_richness ~ density + (1|transect),family=nbinom2,data = inverts)  #Must be glmm() to account for random effect
 
-evenness_model_density <- glmer(species_evenness ~ density + (1|transect),family = poisson, data = inverts)   #will probably use a different link function
+residuals_richness <- residuals(richness_model)
+qqnorm(residuals_richness)
+qqline(residuals_richness)
+hist(residuals_richness)
 
-residuals_evenness_density <- residuals(evenness_model_density)
-qqnorm(residuals_evenness_density)
-qqline(residuals_evenness_density)
+summary(richness_model)
+anova(richness_model)
+Anova(richness_model)
 
-hist(residuals_evenness_density)
+evenness_model <- glmmTMB(species_evenness ~ density + (1|transect),family = binomial, data = inverts)   #will probably use a different link function. Beta distribution did not work, as y <= 1
 
-summary(evenness_model_density)
-anova(evenness_model_density)
-Anova(evenness_model_density)
+residuals_evenness <- residuals(evenness_model)
+qqnorm(residuals_evenness)
+qqline(residuals_evenness)
 
-abundance_model_density <- glmer(total_abundance ~ density + (1|transect), family=poisson, data = inverts)
+hist(residuals_evenness)
 
-residuals_abundance_density <- residuals(abundance_model_density)
-qqnorm(residuals_abundance_density)
-qqline(residuals_abundance_density)
-hist(residuals_abundance_density)
+summary(evenness_model)
+anova(evenness_model)
+Anova(evenness_model)
+
+abundance_model <- glmmTMB(total_abundance ~ density + (1|transect), family=nbinom2, data = inverts)   #Negative binomial is slightly better than poisson
+
+summary(abundance_model)
+
+abundance.dispersion.ratio <- 97.7/16
+
+inverts <- inverts %>% 
+  mutate(corrected_abundance=round(total_abundance/abundance.dispersion.ratio, digits = 2)*100)
+
+abundance_model <- glmmTMB(corrected_abundance ~ density + (1|transect), family=nbinom2, data = inverts)   #Uncorrected is better
+
+abundance_model <- glmmTMB(total_abundance ~ density + (1|transect), family=nbinom2, data = inverts)   #Negative binomial is slightly better than poisson
+
+residuals_abundance <- residuals(abundance_model)
+qqnorm(residuals_abundance)
+qqline(residuals_abundance)
+hist(residuals_abundance)
 
 summary(abundance_model)
 anova(abundance_model)
 Anova(abundance_model)
-
