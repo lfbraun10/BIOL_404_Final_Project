@@ -31,7 +31,7 @@ ggsave("./figures/richness_distance_plot.PNG",figure_2)
 figure_3 <- ggplot(inverts, aes(x = d_from_path_m, y = total_abundance)) +
   geom_point(alpha = 0.5) +
   geom_smooth(method = "glm", method.args = list(family = "poisson"), color = "blue") +
-  labs(x = "Distance from Path (m)", y = "Species Abundance",
+  labs(x = "Distance from Path (m)", y = "Total Abundance",
        ) +
   theme_minimal()
 
@@ -71,7 +71,7 @@ ggsave("./figures/richness_density_plot.PNG",figure_5)
 figure_6 <- ggplot(inverts, aes(x = density, y = total_abundance)) +
   geom_point(alpha = 0.5) +
   geom_smooth(method = "glm", method.args = list(family = "poisson"), color = "blue") +
-  labs(x = "Density (g/cm^3)", y = "Species Abundance",
+  labs(x = "Density (g/cm^3)", y = "Total Abundance",
   ) +
   theme_minimal()
 
