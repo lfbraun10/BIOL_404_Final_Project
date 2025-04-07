@@ -59,6 +59,8 @@ inverts <- inverts %>%
 
 richness_model <- glmmTMB(corrected_species_richness ~ d_from_path_m + (1|transect),family=nbinom2,data = inverts)  #Uncorrected is better
 
+richness_model <- glmmTMB(species_richness ~ d_from_path_m + (1|transect),family=nbinom2,data = inverts)  #Must be glmm() to account for random effect
+
 residuals_richness <- residuals(richness_model)
 qqnorm(residuals_richness)
 qqline(residuals_richness)
