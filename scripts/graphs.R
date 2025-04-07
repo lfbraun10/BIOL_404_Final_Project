@@ -6,7 +6,7 @@ View(inverts)
 #plot for species evenness
 figure_1 <- ggplot(inverts, aes(x = d_from_path_m, y = species_evenness)) +
   geom_point(alpha = 0.5) +
-  geom_smooth(method = "glm", method.args = list(family = "poisson"), color = "blue") +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), color = "blue") +
   labs(x = "Distance from Path (m)", y = "Species Evenness",
        ) +
   theme_minimal()
@@ -45,7 +45,7 @@ ggsave("./figures/abundance_distance_plot.PNG",figure_3)
 #plot for species evenness
 figure_4 <- ggplot(inverts, aes(x = density, y = species_evenness)) +
   geom_point(alpha = 0.5) +
-  geom_smooth(method = "glm", method.args = list(family = "poisson"), color = "blue") +
+  geom_smooth(method = "glm", method.args = list(family = "binomial"), color = "blue") +
   labs(x = "Density (g/cm^3)", y = "Species Evenness",
   ) +
   theme_minimal()
