@@ -47,6 +47,14 @@ hist(inverts$species_evenness)  #Very left skewed
 hist(inverts$total_abundance)    #roughly poisson
 mean(inverts$total_abundance)/var(inverts$total_abundance)   #0.3545879, Overdispersed
 
+#Test distributions of distance and density
+
+hist(inverts$d_from_path_m)
+hist(inverts$density)
+
+#Test for correlation (Pearson's product-moment correlation)
+
+cor.test(inverts$d_from_path_m, inverts$density)
 
 richness_model <- glmmTMB(species_richness ~ d_from_path_m + (1|transect),family=nbinom2,data = inverts)  #Must be glmm() to account for random effect
 
