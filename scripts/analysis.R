@@ -56,6 +56,12 @@ hist(inverts$density)
 
 cor.test(inverts$d_from_path_m, inverts$density)
 
+#Coefficient of variation soil core density
+
+cv.d <- sd(inverts$density)/mean(inverts$density)
+
+cv.d
+
 richness_model <- glmmTMB(species_richness ~ d_from_path_m + (1|transect),family=nbinom2,data = inverts)  #Must be glmm() to account for random effect
 
 summary(richness_model)
@@ -178,3 +184,5 @@ hist(residuals_abundance)
 summary(abundance_model)
 anova(abundance_model)
 Anova(abundance_model)
+
+
